@@ -1,3 +1,8 @@
+# v0.8.69
+---------
+
+Version that includes latest changes until April 22, 2024 + husky fix
+
 # v0.8.20
 ---------
 
