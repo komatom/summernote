@@ -1,5 +1,5 @@
 (function($) {
-  $.extend($.summernote.lang, {
+  $.extend(true, $.summernote.lang, {
     'uk-UA': {
       font: {
         bold: 'Напівжирний',
@@ -50,7 +50,6 @@
         textToDisplay: 'Текст, що відображається',
         url: 'URL для переходу',
         openInNewWindow: 'Відкривати у новому вікні',
-        useProtocol: 'Використовувати протокол за замовчуванням',
       },
       table: {
         table: 'Таблиця',

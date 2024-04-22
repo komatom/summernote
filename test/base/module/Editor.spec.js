@@ -237,7 +237,7 @@ describe('Editor', () => {
         setTimeout(() => {
           editor.insertNode($('<span> world</span>')[0]);
           setTimeout(() => {
-            $('body').focus();
+            $('body').trigger('focus');
             editor.insertNode($('<span> hello</span>')[0]);
             setTimeout(() => {
               expectContentsAwait(context, '<p><span> world</span><span> hello</span>hello</p>', done);
@@ -274,7 +274,7 @@ describe('Editor', () => {
       setTimeout(() => {
         editor.insertText(' world');
         setTimeout(() => {
-          $('body').focus();
+          $('body').trigger('focus');
           setTimeout(() => {
             editor.insertText(' summernote');
             setTimeout(() => {
@@ -292,9 +292,14 @@ describe('Editor', () => {
       expectContentsAwait(context, '<p>hello<span> world</span></p>', done);
     });
 
-    it('should not add empty paragraph', (done) => {
+    it('should not add empty paragraph when pasting paragraphs', (done) => {
       editor.pasteHTML('<p><span>whatever</span><br></p><p><span>it has</span><br></p>');
       expectContentsAwait(context, '<p>hello</p><p><span>whatever</span><br></p><p><span>it has</span><br></p>', done);
+    });
+
+    it('should not add empty paragraph when pasting a node that is not isInline', (done) => {
+      editor.pasteHTML('<ul><li>list</li></ul><hr><p>paragraph</p><table><tr><td>table</td></tr></table><p></p><blockquote>blockquote</blockquote><data>data</data>');
+      expectContentsAwait(context, '<p>hello</p><ul><li>list</li></ul><hr><p>paragraph</p><table><tbody><tr><td>table</td></tr></tbody></table><p></p><blockquote>blockquote</blockquote><data>data</data>', done);
     });
 
     it('should not call change event more than once per paste event', () => {
@@ -569,6 +574,25 @@ describe('Editor', () => {
       });
 
       expectContentsAwait(context, '<p><a href="/relative/url" target="_blank">summernote</a></p>', done);
+    });
+
+    it('should insert safe html', (done) => {
+      var text = 'hello';
+      var pNode = $editable.find('p')[0];
+      var textNode = pNode.childNodes[0];
+      var startIndex = textNode.wholeText.indexOf(text);
+      var endIndex = startIndex + text.length;
+
+      var rng = range.create(textNode, startIndex, textNode, endIndex);
+
+      editor.createLink({
+        url: '/relative/url',
+        text: '<iframe src="hackme.com"></iframe>',
+        range: rng,
+        isNewWindow: true,
+      });
+
+      expectContentsAwait(context, '<p><a href="/relative/url" target="_blank">&lt;iframe src="hackme.com"&gt;&lt;/iframe&gt;</a></p>', done);
     });
 
     it('should modify a link', (done) => {

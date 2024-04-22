@@ -52,7 +52,7 @@ module.exports = {
       [`lang/${lang}`, `./src/lang/${lang}.js`]
     ),
     // ... and for minimized
-    ...languages.map(lang => 
+    ...languages.map(lang =>
       [`lang/${lang}.min`, `./src/lang/${lang}.js`]
     ),
   ]),
@@ -64,7 +64,12 @@ module.exports = {
   },
 
   externals: {
-    jquery: 'jQuery',
+    jquery: {
+      root: 'jQuery',
+      commonjs: 'jquery',
+      commonjs2: 'jquery',
+      amd: 'jquery',
+    },
   },
 
   module: {
